@@ -24,7 +24,7 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
     central_color = vec3(78., 16., 105.) / 255.
 
     # center uv and norm y (x in [-1/2 w/h, 1/2 w/h])
-    uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y
+    uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y 
 
     # general move
     uv += iTime * 0.04
@@ -42,6 +42,7 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
     # narrowing shapes to frame borders
     absolute_uv = fragCoord.xy / iResolution.xy - 0.5
     thinning = abs(length(absolute_uv) - 1.)
+    # define pulsations as thickening of figures
     width = 0.2 * thinning * pulsations(iTime)
 
     curve = grid_view - sign(grid_view.x + grid_view.y + 0.001) * 0.5

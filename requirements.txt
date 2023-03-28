@@ -1,0 +1,8 @@
+colorama==0.4.6
+dill==0.3.6
+markdown-it-py==2.2.0
+mdurl==0.1.2
+numpy==1.24.2
+Pygments==2.14.0
+rich==13.3.2
+taichi==1.4.1

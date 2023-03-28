@@ -86,11 +86,3 @@ def mod(x: ti.f32, y: ti.f32):
 @ti.func
 def sqrt(vec):
     return ti.sqrt(vec)
-
-# v3 = vec3(1., 2., 3.)
-# print(v3[0])
-
-# print(v3.x)
-# print(v3.b)
-
-

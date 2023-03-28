@@ -7,12 +7,14 @@ def hash22(p):
 
 @ti.func
 def disp(p):
-    ofs = .5;          # jitter Voronoi centers in -ofs ... 1.+ofs
+    ofs = .5; # jitter Voronoi centers in -ofs ... 1.+ofs
     return -ofs + (1. + 2. * ofs) * hash22(p)
 
 @ti.func
 def voronoiB(u): # returns len + id
     ''' 
+    Voronoi distance to borders.
+    inspired by https://www.shadertoy.com/view/ldl3W8
     return vec3
     u : vec2 
     '''
@@ -70,6 +72,14 @@ def noise22(p):
 
 @ti.func
 def fbm22(p):
+    '''
+    add pseudo Perlin noise
+    Parameter
+    p : 2-d vector
+
+    Return 
+    v : 2-d vector with noise
+    '''
     v = vec2(0.)
     a = .5
     R = rot(0.37)
@@ -80,23 +90,6 @@ def fbm22(p):
         p *= 2.
         a /= 2.
     return v
-
-@ti.func
-def voronoi(u):  # returns len + id
-    iu = floor(u)
-    v = vec2(0.)
-    d = 0.
-    m = 100000000.0
-
-    for k in range(25):
-        p = iu + vec2(ti.cast(k, ti.f32) % 5. - 2., ti.cast(k, ti.f32) / 5. - 2.)
-        o = disp(p)
-        r = p - u + o
-        d = dot(r, r)
-        if d < m: 
-            m = d
-            v = r
-    return vec3(sqrt(m), v + u)
 
 
 @ti.func
@@ -110,24 +103,24 @@ def background(fragCoord, iTime: ti.f32, iResolution):
     RATIO = 2.
 
     CRACK_zebra_scale = .08
-    # CRACK_zebra_amp = 1.2
     CRACK_zebra_amp = (sin(iTime) / 20.) + 1.4
-    CRACK_profile = 0.25     # fault vertical shape  1.  .2 
-    CRACK_slope = 1.4       #                     10.  1.4
+    CRACK_profile = 0.25 
+    CRACK_slope = 1.4
     CRACK_width = .0
 
 
     V = U / vec2(RATIO, 1.) # voronoi cell shape
+    ''' add pseudo Perlin noise '''
     D = fbm22(CRACK_zebra_scale * U) / CRACK_zebra_scale / CRACK_zebra_amp
+    '''evaluate Voronoi distance to borders'''
     H = voronoiB(V + D); 
         
-    d = H.x                                # distance to cracks
+    d = H.x # distance to cracks
 
     d = min(1., CRACK_slope * pow(max(0., d - CRACK_width), CRACK_profile))
 
-    white  = vec3(215.,  188., 126.) / 255.
+    white  = vec3(245.,  188., 126.) / 255.
   
     col = (sin(vec3(d)) + 0.3) * white
-    col.gb -= 0.1
 
     return col

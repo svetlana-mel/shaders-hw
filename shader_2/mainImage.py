@@ -90,6 +90,13 @@ def segment(a, b, p):
 
 @ti.func
 def high_between(f, lo, hi, iResolution):
+    '''
+    Helper function that returns 1 if f is between
+    lo and hi, and 0 otherwise. The transition between
+    0 and 1 is smoothed to about 2 pixels.
+
+    f, lo, hi : ti.f32 (numbers)
+    '''
     d = 2.0 / iResolution.x
     rad = (hi - lo) / 2.0
     mid = (lo + hi) / 2.0
@@ -97,6 +104,7 @@ def high_between(f, lo, hi, iResolution):
 
 @ti.func
 def pattern(i: int, p, iResolution):
+    '''define 4 pattern types for each belt'''
     i = i % 4
     s = (p.x - p.y) / sqrt(2.0)
 
@@ -118,7 +126,6 @@ def pattern(i: int, p, iResolution):
         result = high_between(length(dot_center - p), dot_radius, 100.0, iResolution)
 
     return result
-
 
 
 @ti.func
@@ -171,6 +178,7 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
                 c1 if p.x < p1.x else c0,
                 p)
             )
+        '''make belts double'''
         p3 = p0 - vec2(1.0 - sin(t * 0.025), 1.0 - sin(t * 0.027)) * 0.05
         p4 = p1 + vec2(      sin(t * 0.014),       sin(t * 0.032)) * 0.05
         p5 = p2 + vec2(1.0 - sin(t * 0.014), 1.0 - sin(t * 0.032)) * 0.05
@@ -189,6 +197,7 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
             )
         dist = min(dist, dist2 + 0.01)
 
+        '''make belts triple'''
         p3 = p0 - vec2(1.0 - sin(t * 0.5), 1.0 - sin(t * 0.07)) * 0.05
         p4 = p1 + vec2(      sin(t * 0.14),       sin(t * 0.32)) * 0.05
         p5 = p2 + vec2(1.0 - sin(t * 0.14), 1.0 - sin(t * 0.02)) * 0.05
@@ -211,9 +220,10 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
 
         fill   = high_between(dist, -1.0,   0.025, iResolution)
         border = high_between(dist,  0.022, 0.028, iResolution) * (float(i) / float(NUM_BELTS) + 0.5)
-        id      = mix(id, ti.cast(i, ti.f32), fill)
-        outline = mix(outline, border, fill)
+        id     = mix(id, ti.cast(i, ti.f32), fill)
+        outline= mix(outline, border, fill)
 
+    '''define background cracks-like pattern'''
     background_color = background(fragCoord, iTime, iResolution)
 
     fg = fg_colors[ti.cast(id / 4, ti.i32), :] if 0.0 <= id else background_color

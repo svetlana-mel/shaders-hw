@@ -19,6 +19,7 @@ def fract(x):
 @ti.func
 def clamp(x, minVal, maxVal):
     """
+    min( max(x, minVal), maxVal)
     constrain a value to lie between two further values
     Parameters:
     x : Specify the value to constrain.
@@ -176,31 +177,3 @@ def rot(a):
     '''return rotation matrix'''
     return mat2(cos(a), -sin(a), 
                 sin(a), cos(a))
-
-# red    = vec3(0.816, 0.325, 0.227)
-# green  = vec3(0.584, 0.639, 0.38)
-# blue   = vec3(0.498, 0.588, 0.49)
-# yellow = vec3(0.843, 0.725, 0.353)
-# white  = vec3(0.91,  0.804, 0.596)
-# black  = vec3(0.125, 0.098, 0.078)
-
-# fg_colors = mat83(blue,    red,  green, green, yellow,  blue,   red, green)
-# bg_colors = mat83(red, yellow, yellow,  blue,  white, white, white, white)
-
-# print(vec3(fg_colors[0, 0], fg_colors[0, 1], fg_colors[0, 2]))
-# print(fg_colors[0, :])
-
-# x = vec2(2., 2.)
-# a = vec2(4., 5.)
-# y = vec2(2., 2.)
-
-
-# print(x * (1. - a) + y * a)
-
-# m1 = mat2([1., 2., 3., 4.])
-# m2 = mat2([5., 0., 6., 1.])
-# v = vec2(1., 1.)
-# print(m1[:, 0])
-# print(vec2(v.dot(m1[:, 0]), v.dot(m1[:, 1])))
-
-# print(vec2(v.dot(m1[0, :]), v.dot(m1[1, :])))

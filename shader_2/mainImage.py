@@ -121,7 +121,6 @@ def pattern(i: int, p, iResolution):
 
 
 
-
 @ti.func
 def mainImage(fragCoord, iTime: ti.f32, iResolution):
     ''' CONSTANTS '''
@@ -132,7 +131,7 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
     white  = vec3(0.91,  0.804, 0.596)
     black  = vec3(0.125, 0.098, 0.078)
 
-    NUM_BELTS = 5
+    NUM_BELTS = 10
 
     fg_colors = mat83(blue,    red,  green, green, yellow,  blue,   red, green)
     bg_colors = mat83(red, yellow, yellow,  blue,  white, white, white, white)
@@ -190,10 +189,28 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
             )
         dist = min(dist, dist2 + 0.01)
 
+        p3 = p0 - vec2(1.0 - sin(t * 0.5), 1.0 - sin(t * 0.07)) * 0.05
+        p4 = p1 + vec2(      sin(t * 0.14),       sin(t * 0.32)) * 0.05
+        p5 = p2 + vec2(1.0 - sin(t * 0.14), 1.0 - sin(t * 0.02)) * 0.05
+        c2 = p4 + vec2(-1.0,                       sin(t * 0.13))  * 0.5
+        c3 = 2.0 * p4 - c0
+        dist2 = min(
+            bezier(
+                p3 if p.x < p4.x else p4,
+                c2 if p.x < p4.x else c3,
+                p4 if p.x < p4.x else p5,
+                p),
+            segment(
+                p4,
+                c3 if p.x < p4.x else c2,
+                p)
+            )
+        dist = min(dist, dist2 + 0.01)
+
         dist *= sin(p.x * 10.0 + sin(p.y)) * 0.2 + 1.0
 
         fill   = high_between(dist, -1.0,   0.025, iResolution)
-        border = high_between(dist,  0.022, 0.028, iResolution)
+        border = high_between(dist,  0.022, 0.028, iResolution) * (float(i) / float(NUM_BELTS) + 0.5)
         id      = mix(id, ti.cast(i, ti.f32), fill)
         outline = mix(outline, border, fill)
 

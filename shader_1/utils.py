@@ -86,3 +86,21 @@ def mod(x: ti.f32, y: ti.f32):
 @ti.func
 def sqrt(vec):
     return ti.sqrt(vec)
+
+
+@ti.func
+def multiply2_left(mat, vec):
+    '''multiply 2-d vector on (2, 2) matrix (from the left) result = v * M'''
+    return vec2(vec.dot(mat[:, 0]), vec.dot(mat[:, 1]))
+
+mat2 = ti.math.mat2
+
+@ti.func
+def rot(a):
+    '''return rotation matrix'''
+    return mat2(cos(a), -sin(a), 
+                sin(a), cos(a))
+
+@ti.func
+def distance(p0, p1):
+    return length(p0 - p1)

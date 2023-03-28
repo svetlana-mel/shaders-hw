@@ -23,13 +23,38 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
     longwise_color = vec3(242., 255., 151.) / 255.
     central_color = vec3(78., 16., 105.) / 255.
 
-    # center uv and norm y (x in [-1/2 w/h, 1/2 w/h])
+    # narrowing shapes to frame borders
+    absolute_uv = fragCoord.xy / iResolution.xy - 0.5
+    thinning = abs(length(absolute_uv) - 1.)
+
+    # center uv and norm y in [-1/2, 1/2] (x in [-1/2 w/h, 1/2 w/h])
     uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y 
+
+    PI = 3.14159256
+
+    '''Water Shaders in the corners'''
+    '''Translate, rotate, translate back'''
+    addition = vec2(-1. * iResolution.x / (2. * iResolution.y), -0.5)
+    uv += addition
+    uv = multiply2_left(rot(PI * pow((1.42 - pow(length(uv), .5)), 15.)), uv)
+    uv -= addition
+  
+    '''Translate, rotate, translate back'''
+    addition = vec2(iResolution.x / (2. * iResolution.y), 0.5)
+    uv += addition
+    uv =  multiply2_left(rot(PI * pow((1.42 - pow(length(uv), .5)), 15.)), uv)
+    uv -= addition
 
     # general move
     uv += iTime * 0.04
     # objects size
-    uv *= 5.
+    uv *= 6.
+
+    '''water effect'''
+    X = uv.x * 25. + iTime
+    Y = uv.y * 25. + iTime
+    uv.y += cos(X + Y) * 0.1 * cos(Y) * length(absolute_uv)
+    uv.x += sin(X - Y) * 0.1 * sin(Y) * length(absolute_uv)
 
     # division of the area into squares (Truchet Tiling)
     grid_view = fract(uv) - 0.5
@@ -39,9 +64,7 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
     rand_n = Hash21(id) # random number between 0 and 5
     if rand_n < 0.5: grid_view.x *= -1.
 
-    # narrowing shapes to frame borders
-    absolute_uv = fragCoord.xy / iResolution.xy - 0.5
-    thinning = abs(length(absolute_uv) - 1.)
+
     # define pulsations as thickening of figures
     width = 0.2 * thinning * pulsations(iTime)
 
@@ -67,5 +90,7 @@ def mainImage(fragCoord, iTime: ti.f32, iResolution):
     final_gradient = flow_color * flow + central_color * central_canvas_gradient + longwise_color * longwise_gradient
 
     col += final_gradient * mask
+
+    col *= pow(thinning, 2.)
 
     return col

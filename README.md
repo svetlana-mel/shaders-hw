@@ -9,7 +9,7 @@ linux
 
 2. `python3 -m venv /path/to/new/virtual/environment`
 
-3. `.\env\Scripts\activate.bat`
+3. `source ./env/bin/activate`
 
 4. `pip3 install -r requirements.txt`
 
@@ -19,7 +19,7 @@ windows
 
 2. `python -m venv <env name> `
 
-3. `activate <env name>`
+3. `.\env\Scripts\activate.bat`
 
 4. `pip install -r requirements.txt`
 

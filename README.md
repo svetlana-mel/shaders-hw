@@ -1,6 +1,6 @@
 # Simple shaders on python
 
-Realisation of 2 shaders using [taichi lib](https://www.taichi-lang.org/).
+Implementation of 2 shaders using [taichi lib](https://www.taichi-lang.org/).
 
 ## How to launch
 1. `git clone <repo>`
